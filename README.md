@@ -9,6 +9,11 @@
                  Good luck & Have fun
 ```
 
+## Summary
+
+This project aims to advance some knowledge in the world of elf-like binary exploitation
+on i386 system.
+
 ## Initial installation instructions
 
 Setup guide => [docs/setup.md](docs/setup.md)
