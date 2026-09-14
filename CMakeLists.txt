@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 cmake_minimum_required(VERSION 3.8.2)
-
+set(CMAKE_SYSTEM_PROCESSOR i686)
 #set(CMAKE_C_COMPILER clang)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_C_COMPILER gcc-9)
@@ -23,6 +23,7 @@ set(CMAKE_C_STANDARD 11)
 set(TARGET_EXE_NAME "${PROJECT_NAME}")
 
 set(PROJECT_CFLAGS
+        -m32
         -Og
         -g3
         -Wa,-L
@@ -51,6 +52,12 @@ IF(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     )
 ENDIF()
 
+set(COMMON_LDFLAGS
+        -m32
+        -nodefaultlibs
+
+)
+
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     LIST(APPEND PROJECT_CFLAGS
             -Wdocumentation
@@ -58,3 +65,28 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
 ENDIF()
 
 set(NASM_FLAGS -f elf64 -g -F dwarf -w+all -w-reloc-rel-dword)
+
+set(TARGET_NAME "level7")
+set(TARGET_SOURCE_DIR "level7/study/src")
+
+file(GLOB_RECURSE TARGET_HEADERS "${TARGET_SOURCE_DIR}/*.h")
+file(GLOB_RECURSE TARGET_SOURCES "${TARGET_SOURCE_DIR}/*.c")
+
+add_executable(${TARGET_NAME}
+        ${TARGET_HEADERS}
+        ${TARGET_SOURCES})
+
+target_include_directories(${TARGET_NAME} PRIVATE
+        ${PROJECT_SOURCE_DIR}
+        /usr/include
+        /usr/include/x86_64-linux-gnu)
+
+target_link_libraries(${TARGET_NAME} "${TARGET_LIBRARIES}")
+target_link_options(${TARGET_NAME} PRIVATE ${COMMON_LDFLAGS})
+target_compile_options(${TARGET_NAME}
+        PRIVATE "${PROJECT_CFLAGS}"
+        PUBLIC
+        ${SDL2_CFLAGS_OTHER}
+        ${SDL2_MIXER_CFLAGS_OTHER}
+        ${FREETYPE2_CFLAGS_OTHER}
+)
