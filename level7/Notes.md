@@ -1,3 +1,8 @@
+### CWEs: Common Weakness Enumeration
+- https://cwe.mitre.org/data/definitions/120.html
+- https://cwe.mitre.org/data/definitions/122.html
+- https://cwe.mitre.org/data/definitions/123.html
+
 ```bash
 $ gdb -nx --batch -ex 'i fun' ./level7
 All defined functions:
@@ -25,6 +30,28 @@ Non-debugging symbols:
 0x080486bc  _fini
 
 ```
+
+### PyGhidra
+```python
+src = """
+typedef unsigned int u32;
+
+struct internet {
+    int priority;
+    char *name;
+};
+"""
+
+tx = currentProgram.startTransaction("Import reconstructed types")
+ok = False
+try:
+    parser = CParser(currentProgram.getDataTypeManager(), True, None)
+    parser.parse(src)
+    ok = True
+finally:
+    currentProgram.endTransaction(tx, ok)
+```
+
 
 ```bash
 $ r2 -e bin.cache=true ./level7
@@ -107,26 +134,6 @@ $3 = 0x9
 
 ```
 
-### PyGhidra
-```python
-src = """
-typedef unsigned int u32;
-
-struct internet {
-    int priority;
-    char *name;
-};
-"""
-
-tx = currentProgram.startTransaction("Import reconstructed types")
-ok = False
-try:
-    parser = CParser(currentProgram.getDataTypeManager(), True, None)
-    parser.parse(src)
-    ok = True
-finally:
-    currentProgram.endTransaction(tx, ok)
-```
 
 
 ## Working with relocations: GOT vs PLT
@@ -264,18 +271,6 @@ $1 = 1788784945
 ```
 
 ```bash
-i fun
-
-define xa
-    set $p = (void **)$arg0
-    set $end = $p + $arg1
-    while $p < $end
-        x/a $p
-        set $p = $p + 1
-    end
-end
-xa &_GLOBAL_OFFSET_TABLE_ 12
-
 set args \
   $(python2.7 -c 'import struct; print "_"*20 + struct.pack("<I", 0x08049928)') \
   $(python2.7 -c 'import struct; print struct.pack("<I", 0x080484f4)')

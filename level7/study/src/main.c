@@ -1,4 +1,3 @@
-#include <sys/mman.h>
 #include <malloc.h>
 #include <string.h>
 #include <sys/types.h>
@@ -23,7 +22,7 @@ void m(void)
 	return;
 }
 
-
+__attribute__((hidden))
 int main(int ac,char **av)
 
 {

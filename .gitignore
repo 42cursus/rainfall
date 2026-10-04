@@ -2,7 +2,19 @@
 /level0/level0
 /level1/level1
 /level2/level2
+/level3/level3
+/level4/level4
+/level5/level5
+/level6/level6
 /level7/level7
+/level7/fake-pass.txt
+/level8/level8
+/level9/level9
+/level9/study/src/clapTrap
+/bonus0/bonus0
+/bonus1/bonus1
+/bonus2/bonus2
+/bonus3/bonus3
 
 ### C++ template
 # Prerequisites
@@ -91,6 +103,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# flat binaries
+*.bin
 
 
 ### JetBrains template
