@@ -1,0 +1,57 @@
+define rpas
+    set $base = (void **)$arg0
+    set $count = $arg1
+
+    if $argc >= 3
+        set $ctx = $arg2
+    else
+        set $ctx = 1
+    end
+
+    set $step = sizeof(void *)
+
+    # Positive/context side first
+    set $i = $ctx
+    set $p = $base + $ctx
+
+    while $i > 0
+        printf "%c[0m", 27
+
+        set $addr = *$p
+        set $off = $i * $step
+
+        printf "%c[2m[%+4d]%c[0m ", 27, $off, 27
+
+        printf "%c[36m%p%c[0m:\t", 27, $p, 27
+
+        printf "[%c[33m", 27
+        output/a $addr
+        printf "%c[0m]\n", 27
+
+        set $p = $p - 1
+        set $i = $i - 1
+    end
+
+    # Anchor and negative side
+    set $p = $base
+    set $i = 0
+    set $end = $base - $count
+
+    while $p > $end
+        printf "%c[0m", 27
+
+        set $addr = *$p
+        set $off = $i * $step
+
+        printf "%c[2m[%+4d]%c[0m ", 27, $off, 27
+
+        printf "%c[36m%p%c[0m:\t", 27, $p, 27
+
+        printf "[%c[33m", 27
+        output/a $addr
+        printf "%c[0m]\n", 27
+
+        set $p = $p - 1
+        set $i = $i - 1
+    end
+end

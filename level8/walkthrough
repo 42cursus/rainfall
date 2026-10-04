@@ -1,0 +1,25 @@
+# level8 → level9
+
+The command loop allocates only four bytes for `auth`, but `login` reads
+four bytes at `auth + 0x20`. `service` stores a copy of its argument in a
+separate heap allocation. On the VM, `auth` starts at `0x0804a008` and
+`service` at `0x0804a018`, so `auth+0x20` points 16 bytes into service's
+controllable string.
+
+From the level8 account on the RainFall VM, enter each line interactively:
+
+```text
+./level8
+auth a
+service AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+login
+id
+cat /home/user/level9/.pass
+```
+
+The 32 `A`s make the integer checked by `login` nonzero, so it executes
+`/bin/sh` with level9 effective UID. The program's printed heap pointers
+show the allocation spacing. If piping input, send the shell commands
+after `login` has executed; `fgets` may otherwise buffer those lines before
+the child shell starts. `disassemble main` shows the `malloc(4)`,
+`strdup`, and read at offset `0x20`.

@@ -1,0 +1,101 @@
+define rpas
+    set $hex = 0
+    set $ctx = 1
+
+    if $_streq("$arg0", "-x")
+        set $hex   = 1
+        set $base  = (void **)$arg1
+        set $count = $arg2
+
+        if $argc >= 4
+            set $ctx = $arg3
+        end
+    else
+        set $base  = (void **)$arg0
+        set $count = $arg1
+
+        if $argc >= 3
+            set $ctx = $arg2
+        end
+    end
+
+    set $step = sizeof(void *)
+
+    # Header
+    printf "%c[2m", 27
+    if $hex
+        printf " OFFSET  "
+    else
+        printf " OFFSET  "
+    end
+    printf "SLOT        VALUE%c[0m\n", 27
+
+    # Positive/context side
+    set $i = $ctx
+    set $p = $base + $ctx
+
+    while $i > 0
+        set $addr = *$p
+        set $off = $i * $step
+
+        printf "%c[2m", 27
+
+        if $hex
+            printf "[+0x%02x]", $off
+        else
+            printf "[%+4d]", $off
+        end
+
+        printf "%c[0m ", 27
+
+        printf "%c[36m%p%c[0m:\t", 27, $p, 27
+
+        printf "[%c[33m", 27
+        output/a $addr
+        printf "%c[0m]\n", 27
+
+        set $p = $p - 1
+        set $i = $i - 1
+    end
+
+    # Anchor
+    set $p = $base
+    set $addr = *$p
+
+    printf "%c[1m[  => ]%c[0m ", 27, 27
+
+    printf "%c[36m%p%c[0m:\t", 27, $p, 27
+
+    printf "[%c[33m", 27
+    output/a $addr
+    printf "%c[0m]\n", 27
+
+    # Negative side
+    set $p = $base - 1
+    set $i = -1
+    set $end = $base - $count
+
+    while $p > $end
+        set $addr = *$p
+        set $off = $i * $step
+
+        printf "%c[2m", 27
+
+        if $hex
+            printf "[-0x%02x]", -$off
+        else
+            printf "[%+4d]", $off
+        end
+
+        printf "%c[0m ", 27
+
+        printf "%c[36m%p%c[0m:\t", 27, $p, 27
+
+        printf "[%c[33m", 27
+        output/a $addr
+        printf "%c[0m]\n", 27
+
+        set $p = $p - 1
+        set $i = $i - 1
+    end
+end
