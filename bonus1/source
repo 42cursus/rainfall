@@ -1,0 +1,19 @@
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+int main(int argc, char **argv)
+{
+    char buffer[40];
+    int number;
+
+    (void)argc; /* The original uses argv[1] and argv[2] unconditionally. */
+    number = atoi(argv[1]);
+    if (number > 9)
+        return 1;
+    memcpy(buffer, argv[2], (uint32_t)number * 4U);
+    if (number == 0x574f4c46)
+        execl("/bin/sh", "sh", (char *)NULL);
+    return 0;
+}

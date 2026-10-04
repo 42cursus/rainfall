@@ -1,0 +1,18 @@
+# bonus1 → bonus2
+
+The program rejects numbers greater than 9, then computes a 32-bit copy
+length as `number * 4`. A negative number passes the signed comparison.
+For `-2147483637`, the 32-bit product wraps to 44. `memcpy` therefore
+copies four bytes beyond the 40-byte local buffer, overwriting `number`.
+The four bytes `FLOW` become `0x574f4c46` on little-endian x86, satisfying
+the later comparison and executing `/bin/sh`.
+
+From the bonus1 account on the RainFall VM:
+
+```sh
+printf 'id\ncat /home/user/bonus2/.pass\n' | \
+  ./bonus1 -2147483637 "$(python2.7 -c 'print "A"*40 + "FLOW"')"
+```
+
+`disassemble main` shows the signed `jle`, four-times multiplication,
+40-byte offset to the local integer, and comparison with `0x574f4c46`.
