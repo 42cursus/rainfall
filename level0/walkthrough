@@ -1,0 +1,18 @@
+# level0 → level1
+
+`main` passes `argv[1]` to `atoi` and compares the result with `0x1a7` (423).
+The matching branch changes real and effective IDs to those of the setuid
+executable, then executes `/bin/sh`. There is no memory corruption here.
+
+On the RainFall VM:
+
+```sh
+ssh -p 4242 level0@<VM_IP> # password: level0
+./level0 423
+id                         # effective UID is level1
+cat /home/user/level1/.pass
+```
+
+`objdump -M intel -d ./level0` shows `cmp eax,0x1a7` at `main+25` and the
+`setresgid`, `setresuid`, and `execv` calls on the matching branch. The
+`flag` file records the level1 password obtained in the VM.

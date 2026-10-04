@@ -1,0 +1,28 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+/* Reconstruction of the setuid program, not a replacement for the ISO binary. */
+int main(int argc, char **argv)
+{
+    char *shell;
+    gid_t group;
+    uid_t user;
+
+    (void)argc; /* The original reads argv[1] without checking argc. */
+    if (atoi(argv[1]) != 0x1a7) {
+        fwrite("No !\n", 1, 5, stderr);
+        return 0;
+    }
+    shell = strdup("/bin/sh");
+    group = getegid();
+    user = geteuid();
+    setresgid(group, group, group);
+    setresuid(user, user, user);
+    char *const args[] = {shell, NULL};
+    execv("/bin/sh", args);
+    return 0;
+}
