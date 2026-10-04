@@ -1,3 +1,7 @@
+# Research notes
+
+This is the working log, including experiments that did not succeed. The verified VM procedure is in `../walkthrough`. Addresses from local experiments may differ from the ISO VM.
+
 ### CWEs: Common Weakness Enumeration
 - https://cwe.mitre.org/data/definitions/120.html
 - https://cwe.mitre.org/data/definitions/122.html
@@ -160,51 +164,51 @@ $3 = 0x9
 pwndbg> pdisas -r0 0x80483a0 31
  ► 0x80483a0                                       ┌┌┌┌┌┌┌┌┌>   push   dword ptr [_GLOBAL_OFFSET_TABLE_+4]
    0x80483a6                                       ╎╎╎╎╎╎╎╎╎    jmp    dword ptr [_GLOBAL_OFFSET_TABLE_+8]
-                                                   ╎╎╎╎╎╎╎╎╎ 
+                                                   ╎╎╎╎╎╎╎╎╎
    0x80483ac                                       ╎╎╎╎╎╎╎╎╎    add    byte ptr [eax], al
    0x80483ae                                       ╎╎╎╎╎╎╎╎╎    add    byte ptr [eax], al
    0x80483b0 <printf@plt>                          ╎╎╎╎╎╎╎╎╎    jmp    dword ptr [printf@got[plt]]
-                                                   ╎╎╎╎╎╎╎╎╎ 
+                                                   ╎╎╎╎╎╎╎╎╎
    0x80483b6 <printf@plt+6>                        ╎╎╎╎╎╎╎╎╎    push   0
    0x80483bb <printf@plt+11>                       ╎╎╎╎╎╎╎╎└<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎╎╎╎╎╎  
+                                                   ╎╎╎╎╎╎╎╎
    0x80483c0 <fgets@plt>                           ╎╎╎╎╎╎╎╎     jmp    dword ptr [fgets@got[plt]]
-                                                   ╎╎╎╎╎╎╎╎  
+                                                   ╎╎╎╎╎╎╎╎
    0x80483c6 <fgets@plt+6>                         ╎╎╎╎╎╎╎╎     push   8
    0x80483cb <fgets@plt+11>                        ╎╎╎╎╎╎╎└─<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎╎╎╎╎   
+                                                   ╎╎╎╎╎╎╎
    0x80483d0 <time@plt>                            ╎╎╎╎╎╎╎      jmp    dword ptr [time@got[plt]]
-                                                   ╎╎╎╎╎╎╎   
+                                                   ╎╎╎╎╎╎╎
    0x80483d6 <time@plt+6>                          ╎╎╎╎╎╎╎      push   0x10
    0x80483db <time@plt+11>                         ╎╎╎╎╎╎└──<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎╎╎╎    
+                                                   ╎╎╎╎╎╎
    0x80483e0 <strcpy@plt>                          ╎╎╎╎╎╎       jmp    dword ptr [strcpy@got[plt]]
-                                                   ╎╎╎╎╎╎    
+                                                   ╎╎╎╎╎╎
    0x80483e6 <strcpy@plt+6>                        ╎╎╎╎╎╎       push   0x18
    0x80483eb <strcpy@plt+11>                       ╎╎╎╎╎└───<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎╎╎     
+                                                   ╎╎╎╎╎
    0x80483f0 <malloc@plt>                          ╎╎╎╎╎        jmp    dword ptr [malloc@got[plt]]
-                                                   ╎╎╎╎╎     
+                                                   ╎╎╎╎╎
    0x80483f6 <malloc@plt+6>                        ╎╎╎╎╎        push   0x20
    0x80483fb <malloc@plt+11>                       ╎╎╎╎└────<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎╎      
+                                                   ╎╎╎╎
    0x8048400 <puts@plt>                            ╎╎╎╎         jmp    dword ptr [puts@got[plt]]
-                                                   ╎╎╎╎      
+                                                   ╎╎╎╎
    0x8048406 <puts@plt+6>                          ╎╎╎╎         push   0x28
    0x804840b <puts@plt+11>                         ╎╎╎└─────<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎╎       
+                                                   ╎╎╎
    0x8048410 <__gmon_start__@plt>                  ╎╎╎          jmp    dword ptr [__gmon_start__@got.plt]
-                                                   ╎╎╎       
+                                                   ╎╎╎
    0x8048416 <__gmon_start__@plt+6>                ╎╎╎          push   0x30
    0x804841b <__gmon_start__@plt+11>               ╎╎└──────<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎╎        
+                                                   ╎╎
    0x8048420 <__libc_start_main@plt>               ╎╎           jmp    dword ptr [__libc_start_main@got.plt]
-                                                   ╎╎        
+                                                   ╎╎
    0x8048426 <__libc_start_main@plt+6>             ╎╎           push   0x38
    0x804842b <__libc_start_main@plt+11>            ╎└───────<   jmp    0x80483a0                   <0x80483a0>
-                                                   ╎         
+                                                   ╎
    0x8048430 <fopen@plt>                           ╎            jmp    dword ptr [fopen@got[plt]]
-                                                   ╎         
+                                                   ╎
    0x8048436 <fopen@plt+6>                         ╎            push   0x40
    0x804843b <fopen@plt+11>                        └────────<   jmp    0x80483a0                   <0x80483a0>
 ```

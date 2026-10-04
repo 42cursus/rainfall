@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+struct node {
+    int id;
+    char *data;
+};
+
+char c[68];
+
+void m(void)
+{
+    printf("%s - %d\n", c, (int)time(NULL));
+}
+
+int main(int argc, char **argv)
+{
+    struct node *first;
+    struct node *second;
+    FILE *pass;
+
+    (void)argc; /* Both arguments are used without a count check. */
+    first = malloc(8);
+    first->id = 1;
+    first->data = malloc(8);
+    second = malloc(8);
+    second->id = 2;
+    second->data = malloc(8);
+    strcpy(first->data, argv[1]);
+    strcpy(second->data, argv[2]);
+    pass = fopen("/home/user/level8/.pass", "r");
+    fgets(c, 0x44, pass);
+    puts("~~");
+    return 0;
+}

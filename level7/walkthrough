@@ -1,0 +1,24 @@
+# level7 → level8
+
+The program allocates two `{id, data}` nodes and separate eight-byte data
+buffers. `strcpy(first->data, argv[1])` can overflow into the following
+node. In the VM, `second->data` is 20 bytes after `first->data`. Replace it
+with the writable `puts` GOT slot at `0x08049928`. The second `strcpy` then
+writes the address of `m` (`0x080484f4`) into that slot.
+
+After these copies, the program reads `/home/user/level8/.pass` into global
+`c` and calls `puts("~~")`. Because `puts` now points to `m`, that call
+prints `c` and the current time. `m` was already present in the binary; the
+exploit redirects the existing call to it.
+
+From the level7 account on the RainFall VM:
+
+```sh
+./level7 \
+  "$(python2.7 -c 'import struct; print "A"*20 + struct.pack("<I",0x08049928)')" \
+  "$(python2.7 -c 'import struct; print struct.pack("<I",0x080484f4)')"
+```
+
+Use `disassemble main` to follow both copies and the later `fgets`/`puts`;
+`info address m` and `objdump -R ./level7` give the two addresses. The
+password before the timestamp is recorded in `flag`.
