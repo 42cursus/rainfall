@@ -1,0 +1,29 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+char *gets(char *);
+
+void p(void)
+{
+    char input[76];
+    uintptr_t caller;
+
+    fflush(stdout);
+    gets(input);
+    caller = (uintptr_t)__builtin_return_address(0);
+    if ((caller & 0xb0000000U) == 0xb0000000U) {
+        printf("(%p)\n", (void *)caller);
+        _exit(1);
+    }
+    puts(input);
+    strdup(input);
+}
+
+int main(void)
+{
+    p();
+    return 0;
+}
