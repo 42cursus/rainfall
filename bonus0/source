@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+void p(char *destination, const char *prompt)
+{
+    char input[4104];
+    char *newline;
+
+    puts(prompt);
+    read(0, input, 4096);
+    newline = strchr(input, '\n');
+    *newline = '\0';
+    strncpy(destination, input, 20);
+}
+
+void pp(char *result)
+{
+    char first[20];
+    char second[20];
+    size_t length;
+
+    p(first, " - ");
+    p(second, " - ");
+    strcpy(result, first);
+    length = strlen(result);
+    result[length] = ' ';
+    result[length + 1] = '\0';
+    strcat(result, second);
+}
+
+int main(void)
+{
+    char result[42];
+
+    pp(result);
+    puts(result);
+    return 0;
+}

