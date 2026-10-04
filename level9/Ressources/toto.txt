@@ -1,0 +1,13 @@
+$fp+12 (0xbffff7b4)
+
+set $argv = *(char ***)($fp+12) @ *(int *)($fp+8)
+set $av = $argv[0] @ *(int **)($fp+8)
+
+set print array on
+set print array-indexes on
+
+set $ac = *(int *)($fp + 8)
+set $av = *(char ***)($fp + 12)
+ptype *$av @ ($ac + 1)
+
+p *$av @ ($ac + 1)

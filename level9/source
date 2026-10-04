@@ -1,0 +1,28 @@
+#include <cstring>
+#include <unistd.h>
+
+class N {
+public:
+    explicit N(int number) : value(number) {}
+    virtual int operator+(N &other) { return value + other.value; }
+    virtual int operator-(N &other) { return value - other.value; }
+    void setAnnotation(char *text)
+    {
+        std::memcpy(annotation, text, std::strlen(text));
+    }
+
+private:
+    char annotation[100];
+    int value;
+};
+
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+        _exit(1);
+    N *first = new N(5);
+    N *second = new N(6);
+    first->setAnnotation(argv[1]);
+    second->operator+(*first);
+    return 0;
+}
