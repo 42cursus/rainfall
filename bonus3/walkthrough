@@ -1,0 +1,18 @@
+# bonus3 → end
+
+The program reads the end user's `.pass` file, then writes a NUL into the
+password buffer at index `atoi(argv[1])`. It compares the truncated buffer
+with `argv[1]` and executes `/bin/sh` on equality.
+
+An empty argument makes `atoi("")` return zero. This sets the first byte
+of the buffer to NUL, so the buffer and the empty argument compare equal.
+No password guessing or memory corruption is needed.
+
+From the bonus3 account on the RainFall VM:
+
+```sh
+printf 'id\ncat /home/user/end/.pass\n' | ./bonus3 ""
+```
+
+`disassemble main` shows the `atoi` result used as the NUL index and the
+later `strcmp` branch. The VM run produced the end password in `flag`.
