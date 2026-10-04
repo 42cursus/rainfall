@@ -1,4 +1,13 @@
 /RainFall.iso
+*.iso
+*.qcow2
+*.i64
+*.idb
+*.whl
+sslkeylog.log
+/level0/wheels/
+/level2/Ressources/exploit/Labsetup/
+/docs/setup.local.md
 /level0/level0
 /level1/level1
 /level2/level2
@@ -11,10 +20,17 @@
 /level8/level8
 /level9/level9
 /level9/study/src/clapTrap
+/level9/Ressources/study/src/clapTrap
 /bonus0/bonus0
 /bonus1/bonus1
 /bonus2/bonus2
 /bonus3/bonus3
+
+bin/
+.idea/
+.venv/
+__pycache__/
+*.pyc
 
 ### C++ template
 # Prerequisites

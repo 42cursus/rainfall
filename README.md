@@ -1,23 +1,21 @@
-```text
-    _____       _       ______    _ _
-   |  __ \     (_)     |  ____|  | | |
-   | |__) |__ _ _ _ __ | |__ __ _| | |
-   |  _   / _` | | '_ \|  __/ _` | | |
-   | | \ \ (_| | | | | | | | (_| | | |
-   |_|  \_\__,_|_|_| |_|_|  \__,_|_|_|
+# RainFall
 
-                 Good luck & Have fun
-```
+42 School binary exploitation project on the supplied 32-bit RainFall VM.
 
-## Summary
+## Team
 
-This project aims to advance some knowledge in the world of elf-like binary exploitation
-on i386 system.
+- Andrei Belov — `abelov`
+- Yookyeong Choi — `yookyeoc`
 
-## Initial installation instructions
+## Submission
 
-Setup guide => [docs/setup.md](docs/setup.md)
+Each `level0`–`level9` and `bonus0`–`bonus3` directory contains:
 
-### Examine file capabilities
+- `flag`: the next account's password, obtained from the running VM;
+- `source`: readable C or C++ reconstruction of that level's binary;
+- `walkthrough`: the vulnerability, payload derivation, and VM demonstration;
+- `Ressources/`: investigation notes and supporting text source files.
 
-How to use getcap => [docs/getcap.md](docs/getcap.md)
+The mandatory levels and bonuses were checked against the supplied VM. Shellcode and fixed stack or heap addresses are specific to that environment. The VM ISO and challenge binaries are excluded from Git, as required by the project subject.
+
+See [VM setup](docs/setup.md) for how to start and access the VM. For the defense, run each walkthrough manually and explain the relevant branch, memory layout, and exploit result. The [correction sheet](https://www.42evalhub.com/spec/rainfall) asks for a precise explanation and a source reconstruction matching the real binary at each level.
