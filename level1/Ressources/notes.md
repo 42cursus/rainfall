@@ -1,3 +1,7 @@
+# Research notes
+
+This is the working log, including experiments that did not succeed. The verified VM procedure is in `../walkthrough`. Addresses from local experiments may differ from the ISO VM.
+
 ### Let's analise what we have:
 
 ```bash

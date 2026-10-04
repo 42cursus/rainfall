@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Present in this old binary, despite its removal from modern C standards. */
+char *gets(char *);
+
+void run(void)
+{
+    fwrite("Good... Wait what?\n", 1, 19, stdout);
+    system("/bin/sh");
+}
+
+int main(void)
+{
+    char input[64];
+
+    gets(input);
+    return 0;
+}
