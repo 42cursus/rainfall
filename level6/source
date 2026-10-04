@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void n(void)
+{
+    system("/bin/cat /home/user/level7/.pass");
+}
+
+void m(void)
+{
+    puts("Nope");
+}
+
+int main(int argc, char **argv)
+{
+    char *buffer;
+    void (**callback)(void);
+
+    (void)argc; /* The original dereferences argv[1] without a check. */
+    buffer = malloc(64);
+    callback = malloc(4);
+    *callback = m;
+    strcpy(buffer, argv[1]);
+    (*callback)();
+    return 0;
+}

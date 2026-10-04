@@ -1,0 +1,17 @@
+# level6 → level7
+
+`main` allocates a 64-byte heap buffer, then a four-byte function pointer
+initialized to `m` (`puts("Nope")`). It copies `argv[1]` with `strcpy`, so
+input can cross the heap chunk boundary and overwrite the function pointer.
+`n` at `0x08048454` runs `cat` on the level7 password file. The two
+allocations are 72 bytes apart in the VM's heap layout.
+
+From the level6 account on the RainFall VM:
+
+```sh
+./level6 "$(python2.7 -c 'import struct; print "A"*72 + struct.pack("<I",0x08048454)')"
+```
+
+`disassemble main` shows the allocations, `strcpy`, and indirect `call eax`.
+`disassemble n` shows the password command. The VM run prints the level7
+password recorded in `flag`.
